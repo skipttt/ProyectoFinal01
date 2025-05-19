@@ -3,17 +3,16 @@ using UnityEngine;
 public class ObstacleMovement : MonoBehaviour
 {
     public float speed = 5f;
+    public Vector2 moveDirection = Vector2.left; // Dirección por defecto a la izquierda
+    public float lifeTime = 4f;
 
     void Start()
     {
-        Destroy(gameObject, 4f); // Se destruye después de 4 segundos
+        Destroy(gameObject, lifeTime);
     }
 
     void Update()
     {
-        transform.Translate(Vector3.left * speed * Time.deltaTime);
-
-        if (transform.position.x < -15) 
-            Destroy(gameObject);
+        transform.Translate(moveDirection * speed * Time.deltaTime);
     }
 }

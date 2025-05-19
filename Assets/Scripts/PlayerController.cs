@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -20,13 +21,11 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        //transform.position = new Vector3(0, transform.position.y, transform.position.z);
-
         bool isJetpackActive = Input.GetMouseButton(0) || Input.GetKey(KeyCode.Space);
 
         if (isJetpackActive)
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jetpackForce); // usa velocity, no linearVelocity
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jetpackForce); // Correcto en 2D
 
             if (jetpackEffect != null && !jetpackEffect.isPlaying)
                 jetpackEffect.Play();
@@ -62,10 +61,25 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Obstacle"))
         {
-            // Aquí puedes cargar la escena de Game Over o reiniciar
-            UnityEngine.SceneManagement.SceneManager.LoadScene("GameOver");
+            Die();
         }
     }
 
-}
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Obstacle"))
+        {
+            Die();
+        }
+    }
 
+    void Die()
+    {
+        Debug.Log("Player has died!");
+
+        // Si la escena no se carga, usa este método alternativo:
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+
+        //SceneManager.LoadScene("GameOver"); // Verifica que la escena esté en Build Settings
+    }
+}
