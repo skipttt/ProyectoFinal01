@@ -9,6 +9,9 @@ public class PlayerController : MonoBehaviour
     public LayerMask groundLayer;
     public float groundCheckRadius = 0.2f;
 
+    public float normalGravity = 1f; // Gravedad mientras vuela
+    public float fallGravity = 2.8f;   // Gravedad cuando cae
+
     private Rigidbody2D rb;
     private Animator animator;
     private bool isGrounded;
@@ -25,7 +28,8 @@ public class PlayerController : MonoBehaviour
 
         if (isJetpackActive)
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jetpackForce); // Correcto en 2D
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jetpackForce); // Corrige linearVelocity a velocity
+            rb.gravityScale = normalGravity; // Menor gravedad al volar
 
             if (jetpackEffect != null && !jetpackEffect.isPlaying)
                 jetpackEffect.Play();
@@ -35,6 +39,8 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
+            rb.gravityScale = fallGravity; // Aumenta gravedad al caer
+
             if (jetpackEffect != null && jetpackEffect.isPlaying)
                 jetpackEffect.Stop();
 
@@ -76,10 +82,7 @@ public class PlayerController : MonoBehaviour
     void Die()
     {
         Debug.Log("Player has died!");
-
-        // Si la escena no se carga, usa este método alternativo:
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-
-        //SceneManager.LoadScene("GameOver"); // Verifica que la escena esté en Build Settings
+        //SceneManager.LoadScene("GameOver"); // Descomenta si prefieres cargar por nombre
     }
 }
