@@ -17,10 +17,10 @@ public class ScoreManager : MonoBehaviour
         int displayScore = Mathf.FloorToInt(score);
 
         if (scoreText != null)
-            scoreText.text = "Score: " + displayScore;
+            scoreText.text = displayScore + " M";
 
         if (tmpScoreText != null)
-            tmpScoreText.text = "Score: " + displayScore;
+            tmpScoreText.text = displayScore + " M";
     }
 
     public int GetScore()
