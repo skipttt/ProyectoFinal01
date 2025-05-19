@@ -20,13 +20,13 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        transform.position = new Vector3(0, transform.position.y, transform.position.z);
+        //transform.position = new Vector3(0, transform.position.y, transform.position.z);
 
         bool isJetpackActive = Input.GetMouseButton(0) || Input.GetKey(KeyCode.Space);
 
         if (isJetpackActive)
         {
-            rb.linearVelocity = new Vector2(0, jetpackForce);
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jetpackForce); // usa velocity, no linearVelocity
 
             if (jetpackEffect != null && !jetpackEffect.isPlaying)
                 jetpackEffect.Play();
@@ -45,11 +45,8 @@ public class PlayerController : MonoBehaviour
 
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 
-        if (isGrounded && !isJetpackActive)
-        {
-            if (animator != null)
-                animator.SetTrigger("landed");
-        }
+        if (animator != null)
+            animator.SetBool("landed", isGrounded && !isJetpackActive);
     }
 
     void OnDrawGizmosSelected()
@@ -60,4 +57,15 @@ public class PlayerController : MonoBehaviour
             Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
         }
     }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Obstacle"))
+        {
+            // Aquí puedes cargar la escena de Game Over o reiniciar
+            UnityEngine.SceneManagement.SceneManager.LoadScene("GameOver");
+        }
+    }
+
 }
+
