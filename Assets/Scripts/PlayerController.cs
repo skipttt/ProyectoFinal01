@@ -9,8 +9,8 @@ public class PlayerController : MonoBehaviour
     public LayerMask groundLayer;
     public float groundCheckRadius = 0.2f;
 
-    public float normalGravity = 1f; // Gravedad mientras vuela
-    public float fallGravity = 2.8f;   // Gravedad cuando cae
+    public float normalGravity = 1f;
+    public float fallGravity = 2.8f;
 
     private Rigidbody2D rb;
     private Animator animator;
@@ -28,8 +28,8 @@ public class PlayerController : MonoBehaviour
 
         if (isJetpackActive)
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jetpackForce); // Corrige linearVelocity a velocity
-            rb.gravityScale = normalGravity; // Menor gravedad al volar
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jetpackForce);
+            rb.gravityScale = normalGravity;
 
             if (jetpackEffect != null && !jetpackEffect.isPlaying)
                 jetpackEffect.Play();
@@ -39,7 +39,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            rb.gravityScale = fallGravity; // Aumenta gravedad al caer
+            rb.gravityScale = fallGravity;
 
             if (jetpackEffect != null && jetpackEffect.isPlaying)
                 jetpackEffect.Stop();
@@ -82,7 +82,19 @@ public class PlayerController : MonoBehaviour
     void Die()
     {
         Debug.Log("Player has died!");
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-        //SceneManager.LoadScene("GameOver"); // Descomenta si prefieres cargar por nombre
+
+        // Obtener el puntaje actual
+        int currentRunScore = FindObjectOfType<ScoreManager>().GetScore();
+
+        // Guardar en PlayerPrefs
+        PlayerPrefs.SetInt("CurrentScore", currentRunScore);
+
+        if (currentRunScore > PlayerPrefs.GetInt("HighScore", 0))
+        {
+            PlayerPrefs.SetInt("HighScore", currentRunScore);
+        }
+
+        // Cargar GameOver
+        SceneManager.LoadScene("GameOver");
     }
 }
