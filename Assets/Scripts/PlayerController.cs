@@ -12,6 +12,10 @@ public class PlayerController : MonoBehaviour
     public float normalGravity = 1f;
     public float fallGravity = 2.8f;
 
+    [Header("Jetpack Sound")]
+    public AudioSource audioSource;
+    public AudioClip jetpackSound;
+
     private Rigidbody2D rb;
     private Animator animator;
     private bool isGrounded;
@@ -20,19 +24,29 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+
+        // Asegura que el AudioSource no empiece con sonido
+        if (audioSource != null)
+            audioSource.loop = true;
     }
 
     void Update()
     {
-        bool isJetpackActive = Input.GetMouseButton(0) || Input.GetKey(KeyCode.Space);
+        bool isJetpackPressed = Input.GetMouseButton(0) || Input.GetKey(KeyCode.Space);
 
-        if (isJetpackActive)
+        if (isJetpackPressed)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jetpackForce);
             rb.gravityScale = normalGravity;
 
             if (jetpackEffect != null && !jetpackEffect.isPlaying)
                 jetpackEffect.Play();
+
+            if (audioSource != null && !audioSource.isPlaying)
+            {
+                audioSource.clip = jetpackSound;
+                audioSource.Play();
+            }
 
             if (animator != null)
                 animator.SetBool("isFlying", true);
@@ -44,6 +58,9 @@ public class PlayerController : MonoBehaviour
             if (jetpackEffect != null && jetpackEffect.isPlaying)
                 jetpackEffect.Stop();
 
+            if (audioSource != null && audioSource.isPlaying)
+                audioSource.Stop();
+
             if (animator != null)
                 animator.SetBool("isFlying", false);
         }
@@ -51,7 +68,7 @@ public class PlayerController : MonoBehaviour
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 
         if (animator != null)
-            animator.SetBool("landed", isGrounded && !isJetpackActive);
+            animator.SetBool("landed", isGrounded && !isJetpackPressed);
     }
 
     void OnDrawGizmosSelected()
@@ -83,10 +100,7 @@ public class PlayerController : MonoBehaviour
     {
         Debug.Log("Player has died!");
 
-        // Obtener el puntaje actual
         int currentRunScore = FindObjectOfType<ScoreManager>().GetScore();
-
-        // Guardar en PlayerPrefs
         PlayerPrefs.SetInt("CurrentScore", currentRunScore);
 
         if (currentRunScore > PlayerPrefs.GetInt("HighScore", 0))
@@ -94,7 +108,6 @@ public class PlayerController : MonoBehaviour
             PlayerPrefs.SetInt("HighScore", currentRunScore);
         }
 
-        // Cargar GameOver
         SceneManager.LoadScene("GameOver");
     }
 }

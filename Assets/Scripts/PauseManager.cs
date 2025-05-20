@@ -4,7 +4,6 @@ using UnityEngine.SceneManagement;
 public class PauseManager : MonoBehaviour
 {
     public GameObject pauseMenuUI;
-
     private bool isPaused = false;
 
     void Update()
@@ -35,12 +34,17 @@ public class PauseManager : MonoBehaviour
     public void LoadMenu()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("MainMenu"); // Cambia por el nombre de tu escena de menú
+        SceneManager.LoadScene("MainMenu");
     }
 
     public void RestartGame()
     {
         Time.timeScale = 1f;
+
+        // 🔁 Reiniciar dificultad antes de recargar la escena
+        if (DifficultyManager.Instance != null)
+            DifficultyManager.Instance.ResetDifficulty();
+
         Scene currentScene = SceneManager.GetActiveScene();
         SceneManager.LoadScene(currentScene.name);
     }

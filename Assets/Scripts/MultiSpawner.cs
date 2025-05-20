@@ -3,15 +3,18 @@ using UnityEngine;
 public class MultiSpawner : MonoBehaviour
 {
     public GameObject[] obstacles;
-    public Transform[] spawnPoints;  // Múltiples puntos de disparo
-    public float spawnRate = 2f;
+    public Transform[] spawnPoints;
 
     private float timer = 0f;
 
     void Update()
     {
         timer += Time.deltaTime;
-        if (timer >= spawnRate)
+
+        // Obtener spawn rate dinámico desde el DifficultyManager
+        float currentSpawnRate = DifficultyManager.Instance.GetCurrentSpawnRate();
+
+        if (timer >= currentSpawnRate)
         {
             SpawnObstacle();
             timer = 0f;
@@ -20,12 +23,13 @@ public class MultiSpawner : MonoBehaviour
 
     void SpawnObstacle()
     {
+        if (obstacles.Length == 0 || spawnPoints.Length == 0)
+            return;
+
         int spawnIndex = Random.Range(0, spawnPoints.Length);
         int obstacleIndex = Random.Range(0, obstacles.Length);
 
         Vector3 spawnPos = spawnPoints[spawnIndex].position;
         Instantiate(obstacles[obstacleIndex], spawnPos, Quaternion.identity);
     }
-
-
 }

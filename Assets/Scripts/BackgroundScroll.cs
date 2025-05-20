@@ -2,10 +2,9 @@ using UnityEngine;
 
 public class BackgroundScroll : MonoBehaviour
 {
-    public float scrollSpeed = 2f;
     private Transform[] backgrounds;
     private float backgroundWidth;
-    private const float overlapOffset = 0.2f; // Aumentamos la superposición a 0.2 unidades
+    private const float overlapOffset = 0.2f;
 
     void Start()
     {
@@ -20,11 +19,10 @@ public class BackgroundScroll : MonoBehaviour
         SpriteRenderer sr = backgrounds[0].GetComponent<SpriteRenderer>();
         if (sr != null)
         {
-            backgroundWidth = sr.bounds.size.x - overlapOffset; // Se fuerza la superposición
+            backgroundWidth = sr.bounds.size.x - overlapOffset;
             Debug.Log("Background Width (Adjusted): " + backgroundWidth);
         }
 
-        // Alinear con solapamiento fuerte
         for (int i = 1; i < backgrounds.Length; i++)
         {
             backgrounds[i].position = new Vector3(
@@ -37,19 +35,19 @@ public class BackgroundScroll : MonoBehaviour
 
     void Update()
     {
+        float scrollSpeed = DifficultyManager.Instance.GetCurrentScrollSpeed();
+
         foreach (Transform bg in backgrounds)
         {
             bg.Translate(Vector3.left * scrollSpeed * Time.deltaTime);
 
-            // Mantener posición redondeada
             bg.position = new Vector3(
                 Mathf.Round(bg.position.x * 100f) / 100f,
                 bg.position.y,
                 bg.position.z
             );
 
-            // Usar un margen de seguridad amplio
-            if (bg.position.x <= -backgroundWidth - 0.5f) // Aumento del margen
+            if (bg.position.x <= -backgroundWidth - 0.5f)
             {
                 float rightMostX = GetRightMostX();
                 bg.position = new Vector3(rightMostX + backgroundWidth, bg.position.y, bg.position.z);

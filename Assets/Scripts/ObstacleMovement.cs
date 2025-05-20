@@ -2,8 +2,7 @@ using UnityEngine;
 
 public class ObstacleMovement : MonoBehaviour
 {
-    public float speed = 5f;
-    public Vector2 moveDirection = Vector2.left; // Dirección por defecto a la izquierda
+    public Vector2 moveDirection = Vector2.left;
     public float lifeTime = 4f;
 
     void Start()
@@ -13,6 +12,7 @@ public class ObstacleMovement : MonoBehaviour
 
     void Update()
     {
-        transform.Translate(moveDirection * speed * Time.deltaTime);
+        float currentSpeed = DifficultyManager.Instance.GetCurrentSpeed();
+        transform.Translate(moveDirection * currentSpeed * Time.deltaTime);
     }
 }
