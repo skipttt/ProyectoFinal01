@@ -47,4 +47,11 @@ public class GameOverScreen : MonoBehaviour
         };
         return frases[Random.Range(0, frases.Length)];
     }
+
+    public void ResetHighScore()
+    {
+        PlayerPrefs.DeleteKey("HighScore");
+        PlayerPrefs.Save();
+        Debug.Log("Top score reiniciado.");
+    }
 }
